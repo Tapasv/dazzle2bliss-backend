@@ -6,8 +6,14 @@ const connectDB = require('./config/db');
 const app = express();
 connectDB();
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'https://dazzle2bliss-frontend.vercel.app',
+  'http://localhost:5173'
+].filter(Boolean);
+
 app.use(cors({
-  origin: [process.env.CLIENT_URL, 'http://localhost:5173'],
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json());
