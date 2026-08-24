@@ -6,26 +6,49 @@ const multer = require('multer');
 const cloudinary = require('../config/cloudinary');
 
 router.get('/', async (req, res) => {
-  const products = await Product.find().sort({ createdAt: -1 });
-  res.json(products);
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.json(products);
+  } catch (err) {
+    console.error('Fetch products error:', err.message);
+    res.status(500).json({ message: 'Failed to fetch products' });
+  }
 });
 
 router.post('/', auth, async (req, res) => {
-  const product = new Product(req.body);
-  await product.save();
-  res.status(201).json(product);
+  try {
+    const product = new Product(req.body);
+    await product.save();
+    res.status(201).json(product);
+  } catch (err) {
+    console.error('Create product error:', err.message);
+    res.status(400).json({ message: err.message });
+  }
 });
 
 router.put('/:id', auth, async (req, res) => {
-  const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  if (!product) return res.status(404).json({ message: 'Not found' });
-  res.json(product);
+  try {
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    if (!product) return res.status(404).json({ message: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    console.error('Update product error:', err.message);
+    res.status(400).json({ message: err.message });
+  }
 });
 
 router.delete('/:id', auth, async (req, res) => {
-  const product = await Product.findByIdAndDelete(req.params.id);
-  if (!product) return res.status(404).json({ message: 'Not found' });
-  res.json({ message: 'Deleted' });
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) return res.status(404).json({ message: 'Not found' });
+    res.json({ message: 'Deleted' });
+  } catch (err) {
+    console.error('Delete product error:', err.message);
+    res.status(400).json({ message: err.message });
+  }
 });
 
 const upload = multer({
