@@ -1,10 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { syncDB } = require('./models');
+const connectDB = require('./config/db');
 
 const app = express();
-syncDB();
+connectDB();
 
 app.use(cors({
   origin: [process.env.CLIENT_URL, 'http://localhost:5173'],
@@ -13,7 +13,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/products', require('./routes/product'));
+app.use('/api/products', require('./routes/products'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/stats', require('./routes/stats'));
 

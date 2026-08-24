@@ -1,30 +1,20 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
+const mongoose = require('mongoose');
 
-const Product = sequelize.define('Product', {
-  name: { type: DataTypes.STRING, allowNull: false },
-  category: { type: DataTypes.STRING, allowNull: false },
-  subCategory: DataTypes.STRING,
-  price: { type: DataTypes.FLOAT, allowNull: false },
-  originalPrice: DataTypes.FLOAT,
-  discount: DataTypes.INTEGER,
-  image: { type: DataTypes.STRING, allowNull: false },
-  description: DataTypes.TEXT,
-  fullDescription: DataTypes.TEXT,
-  features: {
-    type: DataTypes.TEXT,
-    get() {
-      const raw = this.getDataValue('features');
-      return raw ? JSON.parse(raw) : [];
-    },
-    set(val) {
-      this.setDataValue('features', JSON.stringify(val || []));
-    }
-  },
-  includes: DataTypes.TEXT,
-  setupTime: DataTypes.STRING,
-  rating: { type: DataTypes.FLOAT, defaultValue: 4.5 },
-  ratingCount: { type: DataTypes.INTEGER, defaultValue: 0 }
-});
+const productSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  category: { type: String, required: true },
+  subCategory: String,
+  price: { type: Number, required: true },
+  originalPrice: Number,
+  discount: Number,
+  image: { type: String, required: true },
+  description: String,
+  fullDescription: String,
+  features: [String],
+  includes: String,
+  setupTime: String,
+  rating: { type: Number, default: 4.5 },
+  ratingCount: { type: Number, default: 0 }
+}, { timestamps: true });
 
-module.exports = Product;
+module.exports = mongoose.model('Product', productSchema);
